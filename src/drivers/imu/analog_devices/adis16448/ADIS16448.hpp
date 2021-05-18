@@ -127,12 +127,12 @@ private:
 	} _state{STATE::RESET};
 
 	uint8_t _checked_register{0};
-	static constexpr uint8_t size_register_cfg{4};
+	static constexpr uint8_t size_register_cfg{3};
 	register_config_t _register_cfg[size_register_cfg] {
 		// Register               | Set bits, Clear bits
 		{ Register::MSC_CTRL,     MSC_CTRL_BIT::CRC16_for_burst, 0 },
 		{ Register::SMPL_PRD,     SMPL_PRD_BIT::internal_sampling_clock, SMPL_PRD_BIT::decimation_rate },
-		{ Register::SENS_AVG,     SENS_AVG_BIT::Measurement_range_1000_set, SENS_AVG_BIT::Measurement_range_1000_clear | SENS_AVG_BIT::Filter_Size_Variable_B },
-		{ Register::GPIO_CTRL,    GPIO_CTRL_BIT::GPIO2_DIRECTION | GPIO_CTRL_BIT::GPIO1_DIRECTION, 0},
+		{ Register::SENS_AVG,     SENS_AVG_BIT::Measurement_range_1000_set | SENS_AVG_BIT::Filter_Size_Variable_B_set, SENS_AVG_BIT::Measurement_range_1000_clear | SENS_AVG_BIT::Filter_Size_Variable_B_clear },
+		//{ Register::GPIO_CTRL,    GPIO_CTRL_BIT::GPIO2_DIRECTION | GPIO_CTRL_BIT::GPIO1_DIRECTION, 0},
 	};
 };

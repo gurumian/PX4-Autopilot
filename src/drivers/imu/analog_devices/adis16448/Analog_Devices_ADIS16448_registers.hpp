@@ -141,8 +141,8 @@ enum SENS_AVG_BIT : uint16_t {
 	Measurement_range_1000_clear = Bit9 | Bit8,
 
 	// [2:0] Filter Size Variable B
-	Filter_Size_Variable_B = Bit2 | Bit1 | Bit0, // disable
-
+	Filter_Size_Variable_B_set   = Bit1,
+	Filter_Size_Variable_B_clear = Bit2 | Bit0,
 };
 
 // GPIO_CTRL
