@@ -173,6 +173,16 @@ int ADIS16448::probe()
 			// Only enable CRC-16 for verified lots (HACK to support older ADIS16448AMLZ with no explicit detection)
 			if (LOT_ID1 == 0x1824) {
 				_check_crc = true;
+
+			} else {
+				_check_crc = false;
+
+				for (auto &reg_cfg : _register_cfg) {
+					if (reg_cfg.reg == Register::MSC_CTRL) {
+						reg_cfg.set_bits = reg_cfg.set_bits & ~MSC_CTRL_BIT::CRC16_for_burst;
+						break;
+					}
+				}
 			}
 
 			return PX4_OK;
