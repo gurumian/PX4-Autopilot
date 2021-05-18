@@ -216,7 +216,7 @@ void ADIS16448::RunImpl()
 					ScheduleDelayed(100_ms);
 
 				} else {
-					PX4_DEBUG("Reset not complete, check again in 10 ms");
+					PX4_DEBUG("Reset not complete, check again in 100 ms");
 					ScheduleDelayed(100_ms);
 				}
 			}
@@ -224,12 +224,30 @@ void ADIS16448::RunImpl()
 		} else {
 			RegisterWrite(Register::MSC_CTRL, MSC_CTRL_BIT::Internal_self_test);
 			_state = STATE::SELF_TEST_CHECK;
-			ScheduleDelayed(45_ms); // Automatic Self-Test Time 45 ms
+			ScheduleDelayed(90_ms); // Automatic Self-Test Time > 45 ms
 		}
 
 		break;
 
 	case STATE::SELF_TEST_CHECK: {
+			const uint16_t MSC_CTRL = RegisterRead(Register::MSC_CTRL);
+
+			if (MSC_CTRL & MSC_CTRL_BIT::Internal_self_test) {
+				// self test not finished, check again
+				if (hrt_elapsed_time(&_reset_timestamp) < 1000_ms) {
+					ScheduleDelayed(45_ms);
+					PX4_DEBUG("self test not complete, check again in 45 ms");
+					return;
+
+				} else {
+					// still not cleared, fail self test
+					_self_test_passed = false;
+					_state = STATE::RESET;
+					ScheduleDelayed(1000_ms);
+					return;
+				}
+			}
+
 			const uint16_t DIAG_STAT = RegisterRead(Register::DIAG_STAT);
 
 			if (DIAG_STAT & DIAG_STAT_BIT::Self_test_diagnostic_error_flag) {
